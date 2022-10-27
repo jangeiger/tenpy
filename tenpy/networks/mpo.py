@@ -13,7 +13,7 @@ i.e. the entries of the 'matrices' are local operators.
 Valid boundary conditions of an MPO are the same as for an MPS
 (i.e. ``'finite' | 'segment' | 'infinite'``).
 (In general, you can view the MPO as an MPS with larger physical space and bring it into
-canoncial form. However, unlike for an MPS, this doesn't simplify calculations.
+canonical form. However, unlike for an MPS, this doesn't simplify calculations.
 Thus, an MPO has no `form`.)
 
 We use the following label convention for the `W` (where arrows indicate `qconj`)::
@@ -74,10 +74,10 @@ class MPO:
         Boundary conditions as described in :mod:`~tenpy.networks.mps`.
         ``'finite'`` requires ``Ws[0].get_leg('wL').ind_len = 1``.
     IdL : (iterable of) {int | None}
-        Indices on the bonds, which correpond to 'only identities to the left'.
+        Indices on the bonds, which correspond to 'only identities to the left'.
         A single entry holds for all bonds.
     IdR : (iterable of) {int | None}
-        Indices on the bonds, which correpond to 'only identities to the right'.
+        Indices on the bonds, which correspond to 'only identities to the right'.
     max_range : int | np.inf | None
         Maximum range of hopping/interactions (in unit of sites) of the MPO. ``None`` for unknown.
     explicit_plus_hc : bool
@@ -96,11 +96,11 @@ class MPO:
         Boundary conditions as described in :mod:`~tenpy.networks.mps`.
         ``'finite'`` requires ``Ws[0].get_leg('wL').ind_len = 1``.
     IdL : list of {int | None}
-        Indices on the bonds (length `L`+1), which correpond to 'only identities to the left'.
+        Indices on the bonds (length `L`+1), which correspond to 'only identities to the left'.
         ``None`` for bonds where it is not set.
         In standard form, this is `0` (except for unset bonds in finite case)
     IdR : list of {int | None}
-        Indices on the bonds (length `L`+1), which correpond to 'only identities to the right'.
+        Indices on the bonds (length `L`+1), which correspond to 'only identities to the right'.
         ``None`` for bonds where it is not set.
         In standard form, this is the last index on the bond (except for unset bonds in finite case).
     max_range : int | np.inf | None
@@ -238,10 +238,10 @@ class MPO:
         bc : {'finite' | 'segment' | 'infinite'}
             Boundary conditions as described in :mod:`~tenpy.networks.mps`.
         IdL : (iterable of) {int | None}
-            Indices on the bonds, which correpond to 'only identities to the left'.
+            Indices on the bonds, which correspond to 'only identities to the left'.
             A single entry holds for all bonds.
         IdR : (iterable of) {int | None}
-            Indices on the bonds, which correpond to 'only identities to the right'.
+            Indices on the bonds, which correspond to 'only identities to the right'.
         Ws_qtotal : (list of) total charge
             The `qtotal` to be used for each grid. Defaults to zero charges.
         legs : list of :class:`~tenpy.linalg.charge.LegCharge`
@@ -1348,7 +1348,7 @@ class MPOGraph:
     This representation is used for building H_MPO from the interactions.
     The idea is to view the MPO as a kind of 'finite state machine'.
     The **states** or **keys** of this finite state machine life on the MPO bonds *between* the
-    `Ws`. They label the indices of the virtul bonds of the MPOs, i.e., the indices on legs
+    `Ws`. They label the indices of the virtual bonds of the MPOs, i.e., the indices on legs
     ``wL`` and ``wR``. They can be anything hash-able like a ``str``, ``int`` or a tuple of them.
 
     The **edges** of the graph are the entries ``W[keyL, keyR]``, which itself are onsite operators
@@ -1356,7 +1356,7 @@ class MPOGraph:
     of the MPO. The entry ``W[keyL, keyR]`` connects the state ``keyL`` on bond ``(i-1, i)``
     with the state ``keyR`` on bond ``(i, i+1)``.
 
-    The keys ``'IdR'`` (for 'idenity left') and ``'IdR'`` (for 'identity right') are reserved to
+    The keys ``'IdR'`` (for 'identity left') and ``'IdR'`` (for 'identity right') are reserved to
     represent only ``'Id'`` (=identity) operators to the left and right of the bond, respectively.
 
     .. todo ::
@@ -1384,7 +1384,7 @@ class MPOGraph:
         Maximum range of hopping/interactions (in unit of sites) of the MPO. ``None`` for unknown.
     states : list of set of keys
         ``states[i]`` gives the possible keys at the virtual bond ``(i-1, i)`` of the MPO.
-        `L+1` enries.
+        `L+1` entries.
     graph : list of dict of dict of list of tuples
         For each site `i` a dictionary ``{keyL: {keyR: [(opname, strength)]}}`` with
         ``keyL in states[i]`` and ``keyR in states[i+1]``.
@@ -1890,7 +1890,7 @@ class MPOEnvironment(MPSEnvironment):
     ket : :class:`~tenpy.networks.mpo.MPS`
         The MPS on which `H` acts. May be identical with `bra`.
     **init_env_data :
-        Further keyword arguments with initializaiton data, as returned by
+        Further keyword arguments with initialization data, as returned by
         :meth:`get_initialization_data`.
         See :meth:`initialize_first_LP_last_RP` for details on these parameters.
 

@@ -1176,7 +1176,7 @@ class MPS:
         ----------
         extra_legs : list of {None, :class:`~tenpy.linalg.charges.LegCharge`, int}
             The extra charges to be added on the virtual legs, with qconj=+1.
-            Lenght `L` +1 for finite, length `L` for infinite, with entry `i` left of site `i`.
+            Length `L` +1 for finite, length `L` for infinite, with entry `i` left of site `i`.
             If an `int` is given, fill up with a single block of charges like the Schmidt state
             with highest weight. Note that this might force the resulting state to not be in
             strict "right-canonical" B form if that charge block becomes overcomplete.

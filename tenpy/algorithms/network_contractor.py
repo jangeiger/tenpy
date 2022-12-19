@@ -8,7 +8,7 @@ by Robert N. C. Pfeifer, Glen Evenbly, Sukhwinder Singh, Guifre Vidal, see :arxi
 .. autodata :: outer_product
 
 .. todo ::
-    - implement or wrap netcon.m, a function to find optimal contractionn sequences
+    - implement or wrap netcon.m, a function to find optimal contraction sequences
         (:arxiv:`1304.6112`)
     - improve helpfulness of Warnings
     - _do_trace: trace over all pairs of legs at once. need the corresponding npc function first.

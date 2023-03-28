@@ -1,5 +1,5 @@
 """A collection of tests to check the functionality of `tenpy.tebd`"""
-# Copyright 2018-2021 TeNPy Developers, GNU GPLv3
+# Copyright 2018-2023 TeNPy Developers, GNU GPLv3
 
 import numpy.testing as npt
 import tenpy.linalg.np_conserved as npc
@@ -89,7 +89,7 @@ def test_tebd(bc_MPS, g=0.5):
 
 def test_RandomUnitaryEvolution():
     L = 8
-    spin_half = SpinHalfSite(conserve='Sz')
+    spin_half = SpinHalfSite(conserve='Sz', sort_charge=True)
     psi = MPS.from_product_state([spin_half] * L, [0, 1] * (L // 2), bc='finite')  # Neel state
     assert tuple(psi.chi) == (1, 1, 1, 1, 1, 1, 1)
     TEBD_params = dict(N_steps=2, trunc_params={'chi_max': 10})

@@ -81,7 +81,7 @@ Overview
     speigs
 
 """
-# Copyright 2018-2021 TeNPy Developers, GNU GPLv3
+# Copyright 2018-2023 TeNPy Developers, GNU GPLv3
 
 import numpy as np
 import scipy.linalg
@@ -3522,7 +3522,7 @@ def tensordot(a, b, axes=2):
         # #### the main work
         res = _tensordot_worker(a, b, axes)
     # labels
-    res._labels = _drop_duplicate_labels(a._labels[:-axes], b._labels[axes:])
+    res._labels = _drop_duplicate_labels(a._labels[:a.rank-axes], b._labels[axes:])
     return res
 
 

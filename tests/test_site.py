@@ -1,5 +1,5 @@
 """A collection of tests for :mod:`tenpy.models.site`."""
-# Copyright 2018-2021 TeNPy Developers, GNU GPLv3
+# Copyright 2018-2023 TeNPy Developers, GNU GPLv3
 
 import numpy as np
 import numpy.testing as npt
@@ -58,10 +58,8 @@ def test_site():
     leg2 = npc.LegCharge.from_change_charge(leg2, 0, 2, 'changed')
     s2 = copy.deepcopy(s)
     s2.change_charge(leg2)
-    perm_qind, leg2s = leg2.sort()
-    perm_flat = leg2.perm_flat_from_perm_qind(perm_qind)
     s2s = copy.deepcopy(s2)
-    s2s.change_charge(leg2s, perm_flat)
+    s2s.sort_charge()
     for site_check in [s2, s2s]:
         print("site_check.leg = ", site_check.leg)
         for opn in site_check.opnames:
@@ -80,7 +78,8 @@ def test_site():
 
 
 def test_double_site():
-    for site0, site1 in [[site.SpinHalfSite(None)] * 2, [site.SpinHalfSite('Sz')] * 2]:
+    for site0, site1 in [[site.SpinHalfSite(None)] * 2,
+                         [site.SpinHalfSite('Sz', sort_charge=False)] * 2]:
         for charges in ['same', 'drop', 'independent']:
             ds = site.GroupedSite([site0, site1], charges=charges)
             ds.test_sanity()
@@ -141,27 +140,8 @@ def test_spin_half_site():
                Sigmaz='Sigmaz')
     sites = []
     for conserve in [None, 'Sz', 'parity']:
-        S = site.SpinHalfSite(conserve)
-        S.test_sanity()
-        for op in S.onsite_ops:
-            assert S.hc_ops[op] == hcs[op]
-        if conserve != 'Sz':
-            SxSy = ['Sx', 'Sy']
-        else:
-            SxSy = None
-        check_spin_site(S, SxSy=SxSy)
-        sites.append(S)
-    check_same_operators(sites)
-
-
-def test_spin_site():
-    hcs = dict(Id='Id', JW='JW', Sx='Sx', Sy='Sy', Sz='Sz', Sp='Sm', Sm='Sp')
-    for s in [0.5, 1, 1.5, 2, 5]:
-        print('s = ', s)
-        sites = []
-        for conserve in [None, 'Sz', 'parity']:
-            print("conserve = ", conserve)
-            S = site.SpinSite(s, conserve)
+        for sort_charge in [True, False]:
+            S = site.SpinHalfSite(conserve, sort_charge=sort_charge)
             S.test_sanity()
             for op in S.onsite_ops:
                 assert S.hc_ops[op] == hcs[op]
@@ -171,6 +151,27 @@ def test_spin_site():
                 SxSy = None
             check_spin_site(S, SxSy=SxSy)
             sites.append(S)
+    check_same_operators(sites)
+
+
+def test_spin_site():
+    hcs = dict(Id='Id', JW='JW', Sx='Sx', Sy='Sy', Sz='Sz', Sp='Sm', Sm='Sp')
+    for s in [0.5, 1, 1.5, 2, 5]:
+        print('s = ', s)
+        sites = []
+        for sort_charge in [True, False]:
+            for conserve in [None, 'Sz', 'parity']:
+                print("conserve = ", conserve)
+                S = site.SpinSite(s, conserve, sort_charge=sort_charge)
+                S.test_sanity()
+                for op in S.onsite_ops:
+                    assert S.hc_ops[op] == hcs[op]
+                if conserve != 'Sz':
+                    SxSy = ['Sx', 'Sy']
+                else:
+                    SxSy = None
+                check_spin_site(S, SxSy=SxSy)
+                sites.append(S)
         check_same_operators(sites)
 
 
@@ -232,6 +233,43 @@ def test_spin_half_fermion_site():
         npt.assert_equal(np.dot(Cu, Cd), -np.dot(Cd, Cu))
         npt.assert_equal(np.dot(Cu, Cdd), -np.dot(Cdd, Cu))
         npt.assert_equal(np.dot(Cdu, Cd), -np.dot(Cd, Cdu))
+        npt.assert_equal(np.dot(Cdu, Cdd), -np.dot(Cdd, Cdu))
+        if cons_Sz != 'Sz':
+            SxSy = ['Sx', 'Sy']
+        else:
+            SxSy = None
+        check_spin_site(S, SxSy=SxSy)
+        sites.append(S)
+    check_same_operators(sites)
+
+
+def test_spin_half_hole_site():
+    hcs = dict(Id='Id', JW='JW', JWu='JWu', JWd='JWd',
+               Cu='Cdu', Cdu='Cu', Cd='Cdd', Cdd='Cd',
+               Nu='Nu', Nd='Nd', Ntot='Ntot', dN='dN',
+               Sx='Sx', Sy='Sy', Sz='Sz', Sp='Sm', Sm='Sp')  # yapf: disable
+    sites = []
+    for cons_N, cons_Sz in it.product(['N', 'parity', None], ['Sz', 'parity', None]):
+        print("conserve ", repr(cons_N), repr(cons_Sz))
+        S = site.SpinHalfHoleSite(cons_N, cons_Sz)
+        S.test_sanity()
+        for op in S.onsite_ops:
+            assert S.hc_ops[op] == hcs[op]
+        Id = S.Id.to_ndarray()
+        JW = S.JW.to_ndarray()
+        Cu, Cd = S.Cu.to_ndarray(), S.Cd.to_ndarray()
+        Cdu, Cdd = S.Cdu.to_ndarray(), S.Cdd.to_ndarray()
+        Nu, Nd, Ntot = S.Nu.to_ndarray(), S.Nd.to_ndarray(), S.Ntot.to_ndarray()
+        npt.assert_equal(np.dot(Cdu, Cu), Nu)
+        npt.assert_equal(np.dot(Cdd, Cd), Nd)
+        npt.assert_equal(Nu + Nd, Ntot)
+        # anti-commutate with Jordan-Wigner
+        npt.assert_equal(np.dot(Cu, JW), -np.dot(JW, Cu))
+        npt.assert_equal(np.dot(Cd, JW), -np.dot(JW, Cd))
+        npt.assert_equal(np.dot(Cdu, JW), -np.dot(JW, Cdu))
+        npt.assert_equal(np.dot(Cdd, JW), -np.dot(JW, Cdd))
+        # anti-commute Cu with Cd
+        npt.assert_equal(np.dot(Cu, Cd), -np.dot(Cd, Cu))
         npt.assert_equal(np.dot(Cdu, Cdd), -np.dot(Cdd, Cdu))
         if cons_Sz != 'Sz':
             SxSy = ['Sx', 'Sy']

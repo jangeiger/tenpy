@@ -18,7 +18,7 @@ effective Hamiltonians mentioned above. Currently, effective Hamiltonians for
 The :class:`VariationalCompression` and :class:`VariationalApplyMPO`
 implemented here also directly use the :class:`Sweep` class.
 """
-# Copyright 2018-2021 TeNPy Developers, GNU GPLv3
+# Copyright 2018-2023 TeNPy Developers, GNU GPLv3
 
 from .algorithm import Algorithm
 from ..linalg.sparse import NpcLinearOperator, SumNpcLinearOperator, OrthogonalNpcLinearOperator
@@ -148,7 +148,7 @@ class Sweep(Algorithm):
         if not sequential_simulations:
             data['sweeps'] = self.sweeps
             if len(self.ortho_to_envs) > 0:
-                if self.bc == 'finite':
+                if self.psi.bc == 'finite':
                     data['orthogonal_to'] = [e.ket for e in self.ortho_to_envs]
                 else:
                     # need the environments as well
@@ -388,7 +388,7 @@ class Sweep(Algorithm):
             self._cache_optimize()
             logger.debug("in sweep: i0 =%d", i0)
             # --------- the main work --------------
-            theta = self.prepare_update()
+            theta = self.prepare_update_local()
             update_data = self.update_local(theta, optimize=optimize)
             self.update_env(**update_data)
             self.post_update_local(**update_data)
@@ -468,7 +468,7 @@ class Sweep(Algorithm):
         for env in self._all_envs:
             env.cache_optimize(**kwargs)
 
-    def prepare_update(self):
+    def prepare_update_local(self):
         """Prepare `self` for calling :meth:`update_local`.
 
         Returns
@@ -526,7 +526,7 @@ class Sweep(Algorithm):
         Parameters
         ----------
         theta : :class:`~tenpy.linalg.np_conserved.Array`
-            Local single- or two-site wave function, as returned by :meth:`prepare_update`.
+            Local single- or two-site wave function, as returned by :meth:`prepare_update_local`.
 
         Returns
         -------

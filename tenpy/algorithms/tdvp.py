@@ -8,7 +8,7 @@ e.g. it conserves the unitarity of the time evolution and the energy (for the si
 and it is suitable for time evolution of Hamiltonian with arbitrary long range in the form of MPOs.
 We have implemented:
 
-1. The one-site formulation following the TDVP princible in :class:`SingleSiteTDVPEngine`,
+1. The one-site formulation following the TDVP principle in :class:`SingleSiteTDVPEngine`,
    which **does not** allow for growth of the bond dimension.
 
 2. The two-site algorithm in the :class:`TwoSiteTDVPEngine`, which does allow the bond

@@ -205,6 +205,7 @@ class TimeEvolutionAlgorithm(Algorithm):
             if more than one step is performed at once.
         preserve_norm : bool
             Whether the state will be normalized to its initial norm after each time step.
+            Per default, this is ``False`` for real time evolution and ``True`` for imaginary time.
 
     Attributes
     ----------
@@ -288,7 +289,7 @@ class TimeEvolutionAlgorithm(Algorithm):
             The time step to be used.
         """
         # this function can e.g. calculate an approximation
-        raise NotImplementedError("Sublcasses should implement this.")
+        raise NotImplementedError("Subclasses should implement this.")
 
     def evolve(self, N_steps, dt):
         """Evolve by N_steps*dt.

@@ -20,15 +20,24 @@ Added
 - :class:`~tenpy.models.tj_model.tJModel` and :class:`~tenpy.networks.site.SpinHalfHoleSite`
 - :class:`~tenpy.algorithms.tebd.QRBasedTEBDEngine`
 - :class:`~tenpy.models.clock.ClockModel`, :class:`~tenpy.models.clock.ClockChain` and :class:`~tenpy.models.sites.ClockSite` 
+- Simulation parameters :cfg:option:`Simulation.measure_at_algorithm_checkpoints` and
+  :cfg:option:`Simulation.canonicalize_before_measurement'
 
 Changed
 ^^^^^^^
 - Change the build system and metadata declaration to ``pyproject.toml`` format.
   This makes installation more future-proof and stable, but should not affect how tenpy is used,
   once installed.
+- Allow `couplings` parameters in the :class:`~tenpy.models.mixed_xk.MixedXKModel` methods 
+  :meth:`~tenpy.models.mixed_xk.MixedXKModel.add_inter_ring_hopping`,
+  :meth:`~tenpy.models.mixed_xk.MixedXKModel.add_intra_ring_hopping`,
+  :meth:`~tenpy.models.mixed_xk.MixedXKModel.add_inter_ring_interaction`, and
+  :meth:`~tenpy.models.mixed_xk.MixedXKModel.add_intre_ring_interaction` to vary with `x`.
 
 Fixed
 ^^^^^
+- Potentially serious bug :issue:`260` that the `sorted` flag of :class:`~tenpy.linalg.charges.LegCharge` was not set
+  correctly in :func:`~tenpy.linalg.np_conserved.qr`.
 - :meth:`~tenpy.networks.purification_mps.PurificationMPS.from_infiniteT_canonical` should now work with arbitrary
   charges of the original model, and has the option to double the number of charges to separately conserve the charges
   on each the physical and ancialla legs.
